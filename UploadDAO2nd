@@ -1,0 +1,234 @@
+package com.nirnayak.dao;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.nirnayak.repository.BuySellRateDetailsRepository;
+import com.nirnayak.repository.EmployeeDetailsRepository;
+import com.nirnayak.repository.FinancialDetailsRepository;
+import com.nirnayak.repository.SOWDetailsRepository;
+
+@Component
+public class ExcelUploadDao2 {
+
+	@Autowired
+	private EmployeeDetailsRepository employeeDetailsRepository;
+
+	@Autowired
+	private FinancialDetailsRepository financialDetailsListRepository;
+
+	@Autowired
+	private BuySellRateDetailsRepository buySellRateDetailsRepository;
+
+	@Autowired
+	private SOWDetailsRepository sOWDetailsRepository;
+
+	public int rowCount;
+	Connection connection = null; 
+
+	public void excelDataStore(File file) { //
+
+		// String path = "src\\main\\resources\\data.xlsx";
+		// UploadBean uploadBean = new UploadBean();
+		
+		  String jdbcURL = "jdbc:mysql://localhost:3306/sales";
+	      String username = "user";
+	      String password = "password";
+		/*
+		 * connection = DriverManager.getConnection(jdbcURL, username, password);
+		 * connection.setAutoCommit(false);
+		 */
+         
+         String sql1 = "INSERT INTO employee_details (employee_details_id, associate_name, bap_name, cisco_id, engagment_manager, gross_margin, gross_margin_today, it_experience_bracket, manager_in_project_directory, margin_improvement, offshore_delivery_head_in_project_directory, offshore_delivery_head_in_project_directory_staff_id, onsite_delivery_head, onsite_delivery_head_staff_id, portfolio, project_directory_billable, project_manager, real_manager, real_manager_staff_id, regular_or_expert, remark_or_sourced, resource_location, resource_status, revenue_type, sales_head, service_type, sow_id, staff_id, sub_portfolio, track, true_billable, tt_or_cr, utilization_in_percentages, visa, zensar_experience, zensar_grade) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+         PreparedStatement statement1 = connection.prepareStatement(sql1);    
+         
+         String sql2="INSERT INTO financial_details (financial_details_id, cost_days, cost_offshore, cost_onsite, month, revenue_days, revenue_offshore, revenue_onsite, staff_id, year) VALUES (?,?,?,?,?,?,?,?,?,?)";
+         PreparedStatement statement2 = connection.prepareStatement(sql2);    
+         
+         String sql3="INSERT INTO buy_sell_rate_details (buy_sell_rate_details_id, adjsted_buy_rate, associate_name, buy_rate, effective_date_for_buy_rate, effective_date_for_sell_rate, sell_rate, staff_id) VALUES (?,?,?,?,?,?,?,?)";
+         PreparedStatement statement3 = connection.prepareStatement(sql3);    
+         
+         int count = 0;
+         
+         FileInputStream fileInputStream = null;
+         XSSFWorkbook xssfWorkbook = null;
+         long start = System.currentTimeMillis();
+         try {
+
+			fileInputStream = new FileInputStream(file);
+			xssfWorkbook = new XSSFWorkbook(fileInputStream);
+			XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
+			Row row;
+
+			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+
+				row = (Row) sheet.getRow(i);
+
+				for (int j = 0; j <= row.getLastCellNum(); j++) {
+					if (null != row.getCell(j)) {
+						switch (j) {
+						case 0:
+							String s = Integer.toString((int) row.getCell(j).getNumericCellValue());
+							statement1.setString(1,s);
+							statement2.setString(1,s);
+							statement3.setString(1,s);
+							/* sellRateChangeDetails.setStaffId(s); */
+							break;
+						case 1:
+							String name = row.getCell(j).getStringCellValue();
+							statement1.setString(2,name);
+							statement2.setString(2,name);
+							statement3.setString(2,name);
+							break;
+						case 2:
+							statement1.setString(3,row.getCell(j).getStringCellValue());
+							break;
+						case 3:
+							statement1.setString(4,row.getCell(j).getStringCellValue());
+							break;
+						case 4:
+							statement1.setString(5,row.getCell(j).getStringCellValue());
+							break;
+						case 5:
+							statement1.setString(6,row.getCell(j).getStringCellValue());
+							break;
+						case 6:
+							statement1.setString(7,row.getCell(j).getStringCellValue());
+							break;
+						case 7:
+							statement1.setString(8,row.getCell(j).getStringCellValue());
+							break;
+						case 8:
+							statement1.setString(9,row.getCell(j).getStringCellValue());
+							break;
+						case 9:
+							statement1.setString(10,row.getCell(j).getStringCellValue());
+							break;
+						case 10:
+							statement1.setString(11,row.getCell(j).getStringCellValue());
+							break;
+						case 11:
+							statement1.setString(12,row.getCell(j).getStringCellValue());
+							break;
+						case 12:
+							statement1.setString(13,row.getCell(j).getStringCellValue());
+							break;
+						case 13:
+							try {
+								statement1.setString(14,row.getCell(j).getStringCellValue());
+							} catch (Exception e) {
+								System.out.println(row.getCell(j));
+							}
+							break;
+						case 14:
+							try {
+								statement1.setString(15,row.getCell(j).getStringCellValue());
+							} 
+							catch (Exception e) {
+								System.out.println(row.getCell(j));
+							}
+							break;
+						case 15:
+							statement1.setString(16,row.getCell(j).getStringCellValue());
+							break;
+						case 16:
+							statement1.setString(17,row.getCell(j).getStringCellValue());
+							break;
+						case 17:
+							statement1.setString(18,row.getCell(j).getStringCellValue());
+							/* sowDetails.setBapName(row.getCell(j).getStringCellValue()); */
+							break;
+						case 18:
+							statement1.setString(19,row.getCell(j).getStringCellValue());
+							break;
+						case 19:
+							statement1.setString(20,row.getCell(j).getStringCellValue());
+							break;
+						case 20:
+							statement1.setString(21,row.getCell(j).getStringCellValue());
+							break;
+						case 21:
+							String val2 = Integer.toString((int) row.getCell(j).getNumericCellValue());
+							statement1.setString(22,val2);
+							break;
+						case 22:
+							statement1.setString(23,row.getCell(j).getStringCellValue());
+							break;
+						case 23:
+							statement1.setString(24,row.getCell(j).getStringCellValue());
+							break;
+						case 24:
+							statement1.setString(25,row.getCell(j).getStringCellValue());
+							break;
+						case 25:
+							statement1.setDouble(26,(double) Math.round(row.getCell(j).getNumericCellValue()));
+							break;
+						case 26:
+							statement1.setString(27,row.getCell(j).getStringCellValue());
+							break;
+						case 27:
+							statement1.setString(28,row.getCell(j).getStringCellValue());
+							break;
+						case 28:
+							statement1.setString(29,row.getCell(j).getStringCellValue());
+							break;
+						case 29:
+							/* sowDetails.setSowId(row.getCell(j).getStringCellValue()); */
+							statement1.setString(30,row.getCell(j).getStringCellValue());
+							break;
+								
+							default:
+							System.out.println("Extra row");
+							break;
+						
+						} 
+					}
+						else{
+						System.out.println("Row " + i + " Value is null :" + j);
+						}
+					}
+			}
+         }
+				catch (FileNotFoundException e) {
+		  			System.out.println("File is damaged");
+		  			e.printStackTrace();
+		  		} catch (IOException e) {
+		  			System.out.println("Workbook Error");
+		  			e.printStackTrace();
+		  		}
+
+		  		finally {
+
+		  			try {
+		  				if (xssfWorkbook != null) {
+		  					xssfWorkbook.close();
+		  				}
+		  				if (fileInputStream != null) {
+		  					fileInputStream.close();
+		  				}
+
+		  			} catch (IOException e) {
+		  				// TODO Auto-generated catch block
+		  				e.printStackTrace();
+		  			}
+		  			long end = System.currentTimeMillis();
+		  			System.out.printf("Import done in %d ms\n", (end - start));
+		  		}   
+
+			}
+			
+       
+         	}
+	
+}
+	
